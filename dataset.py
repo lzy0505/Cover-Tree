@@ -1,16 +1,22 @@
 import sqlite3
 import numpy as np
+import math
+from covertree import CoverTree
+from scipy.spatial.distance import euclidean
 
+import sys   
+sys.setrecursionlimit(3075)
 
-# dataset = 'iris'
 dataset = 'abalone'
+# dataset = 'abalone'
+epsilon = 0.5
 
 def run():
     # create_table()
     connect_to_sql()
     # readData()
     getData()
-    print getLabel([13,15,16,40,70,60,30,50,120,1300,1500,1501,1900,1234,1235,1565,144,144,144,144,144,144,144])
+    runKNN()
 
 
 def readData():
@@ -111,6 +117,35 @@ def getLabel(indexlist):
             max = labelcounter[i]
             maxindex = i
     return classlist[maxindex]
+
+
+def getLabelWithDP(indexlist):
+    global classlist, label
+    labelcounter = []
+    for i in classlist:
+        labelcounter.append(0)
+    for index in xrange(indexlist.ndim):
+        labelcounter[classlist.index(label[indexlist[index]])] += 1
+    explist = []
+    expsum = 0.0
+    for q in labelcounter:
+        t = math.exp(epsilon*q/2)
+        expsum += t
+        explist.append(t)
+    max = 0
+    maxindex = -1
+    for i in xrange(len(labelcounter)):
+        if max < labelcounter[i]:
+            max = labelcounter[i]
+            maxindex = i
+    return classlist[maxindex]
+
+
+def runKNN():
+    global data
+    ct = CoverTree(data, euclidean, leafsize=5)
+    (f, l) = ct.query([0.5, 0.33, 0.255, 0.08, 0.205, 0.0895, 0.0395, 0.055], 10)
+    print getLabel(l)
 
 
 if __name__ == '__main__':
