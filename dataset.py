@@ -3,13 +3,13 @@ import numpy as np
 import math
 from covertree import CoverTree
 from scipy.spatial.distance import euclidean
-
 import sys   
 sys.setrecursionlimit(3075)
 
-dataset = 'abalone'
 # dataset = 'abalone'
-epsilon = 0.5
+dataset = 'iris'
+epsilon = 3.0
+
 
 def run():
     # create_table()
@@ -21,7 +21,6 @@ def run():
 
 def readData():
     global cur, conn
-    classlist = []
     # for line in open("abalone.data"):
     #     l = line.split(',')
     #     if l[0] is 'M':
@@ -134,21 +133,19 @@ def getLabelWithDP(indexlist):
         explist.append(t)
     max = 0
     maxindex = -1
-    for i in xrange(len(labelcounter)):
-        if max < labelcounter[i]:
-            max = labelcounter[i]
+    for i in xrange(len(explist)):
+        if max < explist[i]:
+            max = explist[i]
             maxindex = i
     return classlist[maxindex]
 
 
 def runKNN():
     global data
-    ct = CoverTree(data, euclidean, leafsize=5)
-    (f, l) = ct.query([0.5, 0.33, 0.255, 0.08, 0.205, 0.0895, 0.0395, 0.055], 10)
-    print getLabel(l)
+    ct = CoverTree(data, euclidean, leafsize=10)
+    # (f, l) = ct.query([0.5, 0.33, 0.255, 0.08, 0.205, 0.0895, 0.0395, 0.055], 10)
+    # print getLabelWithDP(l)
 
 
 if __name__ == '__main__':
     run()
-
-
